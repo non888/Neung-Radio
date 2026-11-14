@@ -15,7 +15,15 @@ let favorites=[];try{favorites=JSON.parse(localStorage.getItem('neung-radio-favs
 function saveFav(){try{localStorage.setItem('neung-radio-favs',JSON.stringify(favorites))}catch{}}
 function safeUrl(raw){try{const u=new URL(raw);return ['https:','http:'].includes(u.protocol)?u.href:null}catch{return null}}
 function initials(name){const parts=String(name||'FM').replace(/[^\p{L}\p{N} ]/gu,' ').trim().split(/\s+/);return (parts[0]||'FM').slice(0,2).toUpperCase()}
-function logo(el,url,name){const fallback=document.createElement('span');fallback.className='fallback';fallback.textContent=initials(name);el.replaceChildren(fallback);const src=safeUrl(url);if(!src)return;const im=document.createElement('img');im.alt='โลโก้ '+name;im.loading=el.id==='cover'?'eager':'lazy';im.referrerPolicy='no-referrer';im.onerror=()=>{if(im.parentNode===el)el.replaceChildren(fallback)};im.onload=()=>{if(im.naturalWidth>=8&&im.naturalHeight>=8&&el.contains(fallback))el.replaceChildren(im)};im.src=src}
+function logo(el,url,name){
+ const fallback=document.createElement('span');fallback.className='fallback';fallback.textContent=initials(name);
+ const src=safeUrl(url);if(!src){el.replaceChildren(fallback);return}
+ const im=document.createElement('img');im.alt='โลโก้ '+String(name||'สถานีวิทยุ');
+ im.loading='eager';im.decoding='async';im.referrerPolicy='no-referrer';
+ im.onerror=()=>{if(im.parentNode===el)el.replaceChildren(fallback)};
+ im.onload=()=>{if(im.naturalWidth<8||im.naturalHeight<8)im.onerror()};
+ el.replaceChildren(im);im.src=src;
+}
 function clean(s){return {id:String(s.stationuuid||''),name:String(s.name||'ไม่ระบุชื่อ').trim(),url:safeUrl(s.url_resolved||s.url),favicon:safeUrl(s.favicon),tags:String(s.tags||''),codec:String(s.codec||''),bitrate:Number(s.bitrate||0)}}
 const API=['https://de1.api.radio-browser.info','https://nl1.api.radio-browser.info','https://at1.api.radio-browser.info'];
 async function load(){const notice=$('notice');notice.textContent='';$('count').textContent='กำลังโหลด...';$('stations').innerHTML='<div class="empty">กำลังโหลดสถานี...</div>';let err;for(const host of API){try{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);let res;try{res=await fetch(host+'/json/stations/bycountrycodeexact/TH?hidebroken=true&order=clickcount&reverse=true&limit=600',{headers:{Accept:'application/json'},signal:controller.signal})}finally{clearTimeout(timer)}if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(!Array.isArray(data))throw Error('ข้อมูลไม่ถูกต้อง');stations=data.map(clean).filter(s=>s.id&&s.url);if(!stations.length)throw Error('ไม่มีข้อมูลสถานี');render();return}catch(e){err=e}}$('stations').innerHTML='<div class="empty">โหลดสถานีไม่สำเร็จ กด ↻ อีกครั้ง</div>';$('count').textContent='ไม่สามารถเชื่อมต่อ';notice.textContent=err?.message||'เชื่อมต่อไม่ได้'}
