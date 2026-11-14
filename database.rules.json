@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "presence": {
+      ".read": "auth != null",
+      "$uid": {
+        "$session": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.hasChildren(['stationId', 'startedAt']) && newData.child('stationId').isString() && newData.child('stationId').val().length <= 100 && newData.child('startedAt').isNumber()"
+        }
+      }
+    }
+  }
+}
