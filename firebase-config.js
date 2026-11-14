@@ -1,8 +1,9 @@
-// วางค่า firebaseConfig จาก Firebase Console ลงในนี้ (ค่าเหล่านี้ไม่ใช่รหัสผ่านลับ)
 window.NEUNG_FIREBASE_CONFIG = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://PASTE_DATABASE_URL",
-  projectId: "PASTE_PROJECT_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyAOCM-1lyLgeOQAItMJo6gAEojJPpGI-wU",
+  authDomain: "neung-radio.firebaseapp.com",
+  databaseURL: "https://neung-radio-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "neung-radio",
+  storageBucket: "neung-radio.firebasestorage.app",
+  messagingSenderId: "1024352214688",
+  appId: "1:1024352214688:web:d8b56344d6d8fac7e9b3c5"
 };
